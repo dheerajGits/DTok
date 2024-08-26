@@ -1,9 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
+import { Principal } from "@dfinity/principal";
+import { token } from "../../../declarations/token"
 
 function Balance() {
-  
+
+  const [id, setId] = useState("");
+  const [balance, setBalance] = useState();
   async function handleClick() {
     console.log("Balance Button Clicked");
+    const principal = Principal.fromText(id);
+    const balance = await token.balanceOf(principal);
+    setBalance(balance.toLocaleString());
   }
 
 
@@ -12,9 +19,10 @@ function Balance() {
       <label>Check account token balance:</label>
       <p>
         <input
-          id="balance-principal-id"
           type="text"
           placeholder="Enter a Principal ID"
+          value={id}
+          onChange={(e) => setId(e.target.value)}
         />
       </p>
       <p className="trade-buttons">
@@ -25,7 +33,8 @@ function Balance() {
           Check Balance
         </button>
       </p>
-      <p>This account has a balance of XYZ.</p>
+      {balance && <p>This account has a balance of {balance}.</p>
+      }
     </div>
   );
 }
