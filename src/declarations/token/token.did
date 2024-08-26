@@ -1,1 +1,3 @@
-
+service : {
+  balanceOf: (principal) -> (nat) query;
+}
