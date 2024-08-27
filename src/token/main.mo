@@ -5,16 +5,35 @@ actor Token {
     var owner : Principal = Principal.fromText("i3sui-4jlhl-x5foh-vozkm-nq4uw-yqh4y-esg6g-wpylg-kf7a5-r2t3r-uae");
     var totalSupply : Nat = 1000000000; // total token
     var symbol : Text = "DTOK";
-    var balances : HashMap.HashMap<Principal, Nat> = HashMap.HashMap<Principal, Nat>(1, Principal.equal, Principal.hash);
-    balances.put(owner, totalSupply); // here we have initially assigned all the tokens to the owner
+    type balanceType = {
+        balance : Nat;
+        isFreeTokensRecieved : Bool;
+    };
+    var balances : HashMap.HashMap<Principal, balanceType> = HashMap.HashMap<Principal, balanceType>(1, Principal.equal, Principal.hash);
+    balances.put(owner, { balance = 1000000000; isFreeTokensRecieved = true }); // here we have initially assigned all the tokens to the owner
 
     public query func balanceOf(id : Principal) : async Nat {
         let balance : Nat = switch (balances.get(id)) {
             case null 0;
+            case (?result) result.balance;
+        };
+
+        return balance;
+    };
+
+    public query func findData(id : Principal) : async balanceType {
+        let balance : balanceType = switch (balances.get(id)) {
+            case null {
+                {
+                    balance = 0;
+                    isFreeTokensRecieved = false;
+                };
+            };
             case (?result) result;
         };
 
         return balance;
+
     };
     public query func getCurrencySymbol() : async Text {
         return symbol;
@@ -23,12 +42,29 @@ actor Token {
         let caller = msg.caller;
         Debug.print(debug_show (msg.caller));
         let amount = 10000;
-        let balance = await balanceOf(caller);
-        if (balance != 0) {
-            balances.put(msg.caller, amount +balance);
+        let balance = await findData(caller);
+        // if (balance.isFreeTokensRecieved == false) {
+        if (balance.balance != 0) {
+            balances.put(
+                msg.caller,
+                {
+                    balance = balance.balance +amount;
+                    isFreeTokensRecieved = true;
+                },
+            );
         } else {
-            balances.put(msg.caller, amount);
+            balances.put(
+                msg.caller,
+                {
+                    balance = amount;
+                    isFreeTokensRecieved = true;
+                },
+            );
         };
+
+        // } else {
+        //     return "Already claimed";
+        // };
         return "Sucess";
     };
 };

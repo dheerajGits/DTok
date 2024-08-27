@@ -1,5 +1,11 @@
+type balanceType = 
+ record {
+   balance: nat;
+   isFreeTokensRecieved: bool;
+ };
 service : {
   balanceOf: (principal) -> (nat) query;
+  findData: (principal) -> (balanceType) query;
   getCurrencySymbol: () -> (text) query;
   payOut: () -> (text);
 }
