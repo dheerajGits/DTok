@@ -5,11 +5,14 @@ import { token } from "../../../declarations/token"
 function Balance() {
 
   const [id, setId] = useState("");
+  const [symbol, setSymbol] = useState("");
   const [balance, setBalance] = useState();
   async function handleClick() {
-    console.log("Balance Button Clicked");
     const principal = Principal.fromText(id);
     const balance = await token.balanceOf(principal);
+    const symbol = await token.getCurrencySymbol();
+    console.log(balance);
+    setSymbol(symbol);
     setBalance(balance.toLocaleString());
   }
 
@@ -33,7 +36,7 @@ function Balance() {
           Check Balance
         </button>
       </p>
-      {balance && <p>This account has a balance of {balance}.</p>
+      {balance && <p>This account has a balance of {balance} {symbol}.</p>
       }
     </div>
   );
