@@ -7,13 +7,15 @@ function Balance() {
   const [id, setId] = useState("");
   const [symbol, setSymbol] = useState("");
   const [balance, setBalance] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   async function handleClick() {
     const principal = Principal.fromText(id);
+    setIsLoading(true);
     const balance = await token.balanceOf(principal);
     const symbol = await token.getCurrencySymbol();
-    console.log(balance);
     setSymbol(symbol);
     setBalance(balance.toLocaleString());
+    setIsLoading(false);
   }
 
 
@@ -25,6 +27,7 @@ function Balance() {
           type="text"
           placeholder="Enter a Principal ID"
           value={id}
+          required={true}
           onChange={(e) => setId(e.target.value)}
         />
       </p>
@@ -32,6 +35,7 @@ function Balance() {
         <button
           id="btn-request-balance"
           onClick={handleClick}
+          disabled={isLoading}
         >
           Check Balance
         </button>

@@ -1,11 +1,13 @@
-type balanceType = 
+type balanceTypeWithMessage = 
  record {
    balance: nat;
    isFreeTokensRecieved: bool;
+   message: text;
  };
 service : {
   balanceOf: (principal) -> (nat) query;
-  findData: (principal) -> (balanceType) query;
+  findData: (principal) -> (balanceTypeWithMessage) query;
   getCurrencySymbol: () -> (text) query;
   payOut: () -> (text);
+  transfer: (principal, nat) -> (text);
 }

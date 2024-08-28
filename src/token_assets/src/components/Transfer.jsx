@@ -1,9 +1,14 @@
-import React from "react";
-
+import React, { useState } from "react";
+import { token } from "../../../declarations/token";
 function Transfer() {
-  
+
+  const [toUser, setToUser] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
   async function handleClick() {
-    
+    setIsLoading(true);
+    const message = await token.transfer(toUser, amount);
+
   }
 
   return (
@@ -16,6 +21,8 @@ function Transfer() {
               <input
                 type="text"
                 id="transfer-to-id"
+                value={toUser}
+                onChange={(e) => setToUser(e.target.value)}
               />
             </li>
           </ul>
@@ -27,6 +34,8 @@ function Transfer() {
               <input
                 type="number"
                 id="amount"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
               />
             </li>
           </ul>
