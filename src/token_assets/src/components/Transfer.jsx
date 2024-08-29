@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { token } from "../../../declarations/token";
+import { Principal } from "@dfinity/principal";
 function Transfer() {
 
   const [toUser, setToUser] = useState("");
@@ -8,7 +9,9 @@ function Transfer() {
   const [message, setMessage] = useState("");
   async function handleClick() {
     setIsLoading(true);
-    const messageRecieved = await token.transfer(toUser, amount);
+    const toPrincipal = Principal.fromText(toUser);
+    const amountToTransfer = Number(amount);
+    const messageRecieved = await token.transfer(toPrincipal, amountToTransfer);
     setMessage(messageRecieved);
     setIsLoading(false);
   }

@@ -4,7 +4,7 @@ import Debug "mo:base/Debug";
 import Nat "mo:base/Nat";
 actor Token {
     var owner : Principal = Principal.fromText("i3sui-4jlhl-x5foh-vozkm-nq4uw-yqh4y-esg6g-wpylg-kf7a5-r2t3r-uae");
-    var totalSupply : Nat = 1000000000; // total token
+    var totalSupply : Nat = 1000000000; // total tokens in circulation
     var symbol : Text = "DTOK";
     type balanceType = {
         balance : Nat;
@@ -75,7 +75,7 @@ actor Token {
                     },
                 );
             }; // added 10000 to the user account
-            balances.put(owner, { balance = ownerBalance -10000; isFreeTokensRecieved = true }); // decreased the tokens from owner balance
+            balances.put(owner, { balance = ownerBalance -amount; isFreeTokensRecieved = true }); // decreased the tokens from owner balance
         } else {
             return "Already claimed or no free tokens to give";
         };
@@ -88,7 +88,7 @@ actor Token {
         let fromBalance = callerAccountDetails.balance;
         if (fromBalance >= amount and callerAccountDetails.message == "success") {
             if (recepientAccount.message == "success") {
-                let newRecipientBalance : Nat = fromBalance +amount;
+                let newRecipientBalance : Nat = recepientAccount.balance +amount;
                 balances.put(
                     to,
                     {
