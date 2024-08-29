@@ -88,11 +88,11 @@ actor Token {
         let fromBalance = callerAccountDetails.balance;
         if (fromBalance >= amount and callerAccountDetails.message == "success") {
             if (recepientAccount.message == "success") {
-                let newFromBalance : Nat = fromBalance -amount;
+                let newRecipientBalance : Nat = fromBalance +amount;
                 balances.put(
-                    callerPrincipal,
+                    to,
                     {
-                        balance = newFromBalance;
+                        balance = newRecipientBalance;
                         isFreeTokensRecieved = callerAccountDetails.isFreeTokensRecieved;
                     },
                 );
@@ -100,6 +100,13 @@ actor Token {
             } else {
                 return "Error in fetching the recipient account details or the reciepient does not exist";
             };
+            balances.put(
+                callerPrincipal,
+                {
+                    balance = callerAccountDetails.balance - amount;
+                    isFreeTokensRecieved = callerAccountDetails.isFreeTokensRecieved;
+                },
+            );
         } else {
             return "Unsufficient money or sender account doesn't exist";
         };

@@ -5,10 +5,12 @@ function Transfer() {
   const [toUser, setToUser] = useState("");
   const [amount, setAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
   async function handleClick() {
     setIsLoading(true);
-    const message = await token.transfer(toUser, amount);
-
+    const messageRecieved = await token.transfer(toUser, amount);
+    setMessage(messageRecieved);
+    setIsLoading(false);
   }
 
   return (
@@ -41,9 +43,10 @@ function Transfer() {
           </ul>
         </fieldset>
         <p className="trade-buttons">
-          <button id="btn-transfer" onClick={handleClick} >
+          <button id="btn-transfer" onClick={handleClick} disabled={isLoading} >
             Transfer
           </button>
+          {message && <p>{message}</p>}
         </p>
       </div>
     </div>
