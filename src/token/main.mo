@@ -2,6 +2,7 @@ import Principal "mo:base/Principal";
 import HashMap "mo:base/HashMap";
 import Debug "mo:base/Debug";
 import Nat "mo:base/Nat";
+import Iter "mo:base/Iter";
 actor Token {
     var owner : Principal = Principal.fromText("i3sui-4jlhl-x5foh-vozkm-nq4uw-yqh4y-esg6g-wpylg-kf7a5-r2t3r-uae");
     var totalSupply : Nat = 1000000000; // total tokens in circulation
@@ -10,13 +11,13 @@ actor Token {
         balance : Nat;
         isFreeTokensRecieved : Bool;
     };
+    private stable var balanceEntries : [(Principal, balanceType)] = [];
     type balanceTypeWithMessage = {
         balance : Nat;
         isFreeTokensRecieved : Bool;
         message : Text;
     };
-    var balances : HashMap.HashMap<Principal, balanceType> = HashMap.HashMap<Principal, balanceType>(1, Principal.equal, Principal.hash);
-    balances.put(owner, { balance = totalSupply; isFreeTokensRecieved = true }); // here we have initially assigned all the tokens to the owner and initialize isFreeTokenRecieved to true
+    private var balances : HashMap.HashMap<Principal, balanceType> = HashMap.HashMap<Principal, balanceType>(1, Principal.equal, Principal.hash);
 
     public query func balanceOf(id : Principal) : async Nat {
         let balance : Nat = switch (balances.get(id)) {
@@ -111,5 +112,16 @@ actor Token {
             return "Unsufficient money or sender account doesn't exist";
         };
         return "Success";
+    };
+
+    system func preupgrade() {
+        balanceEntries := Iter.toArray(balances.entries());
+    };
+    system func postupgrade() {
+        balances := HashMap.fromIter<Principal, balanceType>(balanceEntries.vals(), 1, Principal.equal, Principal.hash);
+        if (balances.size() < 1) {
+            // if it is a first time initialized canister
+            balances.put(owner, { balance = totalSupply; isFreeTokensRecieved = true }); // here we have initially assigned all the tokens to the owner and initialize isFreeTokenRecieved to true
+        };
     };
 };
