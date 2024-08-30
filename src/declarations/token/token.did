@@ -8,6 +8,6 @@ service : {
   balanceOf: (principal) -> (nat) query;
   findData: (principal) -> (balanceTypeWithMessage) query;
   getCurrencySymbol: () -> (text) query;
-  payOut: () -> (text);
+  payOutFaucet: () -> (text);
   transfer: (principal, nat) -> (text);
 }

@@ -7,7 +7,7 @@ function Faucet() {
   const [isLoading, setIsLoading] = useState(false);
   async function handleClick(event) {
     setIsLoading(true);
-    const message = await token.payOut();
+    const message = await token.payOutFaucet();
     setIsLoading(false);
   }
 

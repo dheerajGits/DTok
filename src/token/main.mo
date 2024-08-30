@@ -52,7 +52,7 @@ actor Token {
     public query func getCurrencySymbol() : async Text {
         return symbol;
     };
-    public shared (msg) func payOut() : async Text {
+    public shared (msg) func payOutFaucet() : async Text {
         let caller = msg.caller;
         Debug.print(debug_show (msg.caller));
         let ownerBalance : Nat = await balanceOf(owner);
